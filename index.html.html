@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ระบบเพิ่มอุปกรณ์และ Readings</title>
+  <style>
+    body {
+      background-color: #e0f0ff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #b3daff;
+    }
+
+    input {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    h2 {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📋 เพิ่มข้อมูลอุปกรณ์ (Devices)</h2>
+  <table>
+    <tr><td>รหัสอุปกรณ์</td><td><input type="text" id="deviceId"></td></tr>
+    <tr><td>ชื่อ</td><td><input type="text" id="name"></td></tr>
+    <tr><td>สถานที่</td><td><input type="text" id="location"></td></tr>
+    <tr><td>MAC</td><td><input type="text" id="mac"></td></tr>
+    <tr><td>คำอธิบายเพิ่มเติม</td><td><input type="text" id="note"></td></tr>
+  </table>
+  <button onclick="addDevice()">➕ เพิ่มอุปกรณ์</button>
+
+  <h2>📌 รายการอุปกรณ์</h2>
+  <table id="deviceListTable">
+    <thead>
+      <tr>
+        <th>รหัสอุปกรณ์</th>
+        <th>ชื่อ</th>
+        <th>สถานที่</th>
+        <th>MAC</th>
+        <th>คำอธิบาย</th>
+        <th>วันที่เพิ่ม</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>🌡️ เพิ่ม Readings (อุณหภูมิและความชื้น)</h2>
+  <table>
+    <tr><td>รหัสอุปกรณ์</td><td><input type="text" id="readingDeviceId"></td></tr>
+    <tr><td>อุณหภูมิ (°C)</td><td><input type="number" step="0.1" id="temperature"></td></tr>
+    <tr><td>ความชื้น (%)</td><td><input type="number" step="0.1" id="humidity"></td></tr>
+    <tr><td>คำอธิบาย</td><td><input type="text" id="readingNote"></td></tr>
+  </table>
+  <button onclick="addReading()">📥 เพิ่ม Readings</button>
+
+  <h2>📊 ข้อมูล Readings</h2>
+  <table id="readingListTable">
+    <thead>
+      <tr>
+        <th>รหัสอุปกรณ์</th>
+        <th>อุณหภูมิ (°C)</th>
+        <th>ความชื้น (%)</th>
+        <th>คำอธิบาย</th>
+        <th>วันที่</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    function getCurrentDate() {
+      const today = new Date();
+      const dd = String(today.getDate()).padStart(2, '0');
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const yyyy = today.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function addDevice() {
+      const id = document.getElementById("deviceId").value;
+      const name = document.getElementById("name").value;
+      const location = document.getElementById("location").value;
+      const mac = document.getElementById("mac").value;
+      const note = document.getElementById("note").value;
+      const date = getCurrentDate();
+
+      if (!id || !name || !location || !mac) {
+        alert("กรุณากรอกข้อมูลอุปกรณ์ให้ครบ");
+        return;
+      }
+
+      const row = `
+        <tr>
+          <td>${id}</td>
+          <td>${name}</td>
+          <td>${location}</td>
+          <td>${mac}</td>
+          <td>${note || "-"}</td>
+          <td>${date}</td>
+        </tr>
+      `;
+      document.querySelector("#deviceListTable tbody").innerHTML += row;
+
+      // Clear fields
+      ["deviceId", "name", "location", "mac", "note"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    }
+
+    function addReading() {
+      const id = document.getElementById("readingDeviceId").value;
+      const temp = document.getElementById("temperature").value;
+      const humidity = document.getElementById("humidity").value;
+      const note = document.getElementById("readingNote").value;
+      const date = getCurrentDate();
+
+      if (!id || temp === "" || humidity === "") {
+        alert("กรุณากรอกข้อมูล readings ให้ครบ");
+        return;
+      }
+
+      const row = `
+        <tr>
+          <td>${id}</td>
+          <td>${parseFloat(temp).toFixed(1)}</td>
+          <td>${parseFloat(humidity).toFixed(1)}</td>
+          <td>${note || "-"}</td>
+          <td>${date}</td>
+        </tr>
+      `;
+      document.querySelector("#readingListTable tbody").innerHTML += row;
+
+      // Clear fields
+      ["readingDeviceId", "temperature", "humidity", "readingNote"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+    }
+  </script>
+
+</body>
+</html>
